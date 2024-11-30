@@ -2,7 +2,7 @@ import React from "react";
 import Navbar from "../components/Navbar.jsx";
 import NoteCard from "../components/NoteCard.jsx";
 import { IoMdAdd } from "react-icons/io";
-import AddEditNotes from "../components/AddEditNotes.jsx";
+import AddEditNotes from "./AddEditNotes.jsx";
 const Home = () => {
   return (
     <div>
