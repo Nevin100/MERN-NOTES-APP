@@ -1,11 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
 import Navbar from "../components/Navbar.jsx";
 import NoteCard from "../components/NoteCard.jsx";
 import { IoMdAdd } from "react-icons/io";
 import AddEditNotes from "./AddEditNotes.jsx";
+import Modal from "react-modal";
+
 const Home = () => {
+  const [openAddEditModal, setOpenAddEditModal] = useState({
+    isShown: false,
+    type: "add",
+    data: null,
+  });
   return (
-    <div>
+    <>
       <Navbar />
       <div className="container mx-auto">
         <div className="grid grid-cols-3 gap-4 mt-8 rounded-md">
@@ -25,8 +32,20 @@ const Home = () => {
         <IoMdAdd className="text-[32px] text-white" />
       </button>
 
-      <AddEditNotes />
-    </div>
+      <Modal
+        isOpen={openAddEditModal.isShown}
+        onRequestClose={() => {}}
+        style={{
+          overlay: {
+            backgroundColor: "rgba(0,0,0,0.2)",
+          },
+        }}
+        contentLabel=""
+        className=""
+      >
+        <AddEditNotes />
+      </Modal>
+    </>
   );
 };
 
