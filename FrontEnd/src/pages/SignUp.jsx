@@ -12,15 +12,19 @@ const SignUp = () => {
 
   const handleSignUp = async (e) => {
     e.preventDefault();
+
     if (!Name) {
       setError("Name is required");
     }
+
     if (!validateEmail(email)) {
       setError("Valid email is required");
     }
+
     if (!Password) {
       setError("Password is required");
     }
+
     setError("");
   };
 
@@ -56,12 +60,12 @@ const SignUp = () => {
             {Error && <p className="text-red-500 text-xs pb-1 ">{Error}</p>}
 
             <button type="submit" className="btn-primary">
-              SignUp
+              Create Account
             </button>
             <p className="text-sm text-center mt-4">
               Already Registered ??{" "}
               <Link to="/login" className="font-medium text-primary underline ">
-                Create Account
+                Login
               </Link>
             </p>
           </form>
