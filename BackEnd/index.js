@@ -147,6 +147,7 @@ app.post("/add-note", authenticateToken, async (req, res) => {
   }
 });
 
+//Edit Notes
 app.put("/edit-note/:noteId", authenticateToken, async (req, res) => {
   const noteId = req.params.noteId;
   const { title, content, tags, isPinned } = req.body;
@@ -182,6 +183,23 @@ app.put("/edit-note/:noteId", authenticateToken, async (req, res) => {
     res.status(401).json({ error: true, message: "Invalid Request" });
   }
 });
+
+//Get All Notes
+app.get("/get-all-notes", authenticateToken, async (req, res) => {
+  const { user } = req.user;
+  try {
+    const note = await Note.find({ userId: user._id }).sort({ isPinned: -1 });
+
+    return res.json({
+      error: false,
+      notes,
+      message: "All Notes have been retrieved successfully!!",
+    });
+  } catch (error) {
+    res.status(500).json({ error: true, message: "Invalid Request" });
+  }
+});
+
 //mongoose event listening
 mongoose
   .connect(process.env.MongoURL)
