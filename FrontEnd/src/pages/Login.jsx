@@ -1,32 +1,31 @@
 import React, { useState } from "react";
 import Navbar from "../components/Navbar.jsx";
-import { Link } from "react-router-dom";
-import PasswordInput from "../components/PasswordInput.jsx";
+import { Link, useNavigate } from "react-router-dom";
+import passwordInput from "../components/passwordInput.jsx";
 import { validateEmail } from "../utilis/helper.js";
-import { useNavigate } from "react-router-dom";
 import axiosInstance from "../utilis/AxiosInstance.js";
 const Login = () => {
   const [email, setEmail] = useState("");
-  const [Password, setPassword] = useState("");
-  const [Error, setError] = useState(null);
+  const [password, setpassword] = useState("");
+  const [error, seterror] = useState(null);
   const navigate = useNavigate();
   const handleLogin = async (e) => {
     e.preventDefault();
     if (!validateEmail(email)) {
-      setError("Please Enter a valid Email address ");
+      seterror("Please Enter a valid Email address ");
       return;
     }
-    if (!Password) {
-      setError("Please Enter a valid Password ");
+    if (!password) {
+      seterror("Please Enter a valid password ");
       return;
     }
-    setError("");
+    seterror("");
 
     //Login API :
     try {
       const response = await axiosInstance.post("/login", {
         email: email,
-        password: Password,
+        password: password,
       });
 
       if (response.data && response.data.accessToken) {
@@ -39,9 +38,9 @@ const Login = () => {
         error.response.data &&
         error.response.data.message
       ) {
-        setError(error.response.data.message);
+        seterror(error.response.data.message);
       } else {
-        setError("Unexpected Error!");
+        seterror("Unexpected error!");
       }
     }
   };
@@ -62,12 +61,12 @@ const Login = () => {
               onChange={(e) => setEmail(e.target.value)}
             />
 
-            <PasswordInput
-              value={Password}
-              onChange={(e) => setPassword(e.target.value)}
+            <passwordInput
+              value={password}
+              onChange={(e) => setpassword(e.target.value)}
             />
 
-            {Error && <p className="text-red-500 text-xs pb-1 ">{Error}</p>}
+            {error && <p className="text-red-500 text-xs pb-1 ">{error}</p>}
 
             <button type="submit" className="btn-primary">
               Login
