@@ -281,13 +281,13 @@ app.delete("/delete-note/:noteId", authenticateToken, async (req, res) => {
 app.put("/update-note-pinned/:noteId", authenticateToken, async (req, res) => {
   const { noteId } = req.params; // Extract noteId from params
   const { isPinned } = req.body; // Extract isPinned from body
-  const user = req.user?.user; // Extract user safely from req.user
+  const userId = req.user?.userId; // Extract userId safely from req.user
 
-  // Input validation
-  if (isPinned === undefined) {
+  // Validate input
+  if (typeof isPinned !== "boolean") {
     return res.status(400).json({
       error: true,
-      message: "No changes provided",
+      message: "Invalid input for isPinned",
     });
   }
 
@@ -300,7 +300,7 @@ app.put("/update-note-pinned/:noteId", authenticateToken, async (req, res) => {
 
   try {
     // Find the note for the specific user
-    const note = await Note.findOne({ _id: noteId, userId: user._id });
+    const note = await Note.findOne({ _id: noteId, userId });
     if (!note) {
       return res.status(404).json({
         error: true,
@@ -308,7 +308,7 @@ app.put("/update-note-pinned/:noteId", authenticateToken, async (req, res) => {
       });
     }
 
-    // Update the pin status
+    // Update isPinned
     note.isPinned = isPinned;
 
     // Save the note
