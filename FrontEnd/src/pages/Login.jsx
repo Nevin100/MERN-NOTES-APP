@@ -3,12 +3,13 @@ import Navbar from "../components/Navbar.jsx";
 import { Link } from "react-router-dom";
 import PasswordInput from "../components/PasswordInput.jsx";
 import { validateEmail } from "../utilis/helper.js";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [Password, setPassword] = useState("");
   const [Error, setError] = useState(null);
-
+  const navigate = useNavigate();
   const handleLogin = async (e) => {
     e.preventDefault();
     if (!validateEmail(email)) {
@@ -20,6 +21,29 @@ const Login = () => {
       return;
     }
     setError("");
+
+    //Login API :
+    try {
+      const response = await axiosInstance.post("/login", {
+        email: email,
+        password: Password,
+      });
+
+      if (response.data && response.data.accessToken) {
+        localStorage.setItem("token", response.data.accessToken);
+        navigate("/dashboard");
+      }
+    } catch (error) {
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
+        setError(error.response.data.message);
+      } else {
+        setError("Unexpected Error!");
+      }
+    }
   };
 
   return (
