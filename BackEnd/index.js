@@ -45,7 +45,16 @@ app.post("/create-account", async (req, res) => {
 
   //Save the neww details
   await user.save();
-  const accessToken = jwt.sign({ user }, process.env.ACCESS_TOKEN_SECRET);
+  const accessToken = jwt.sign({ user }, process.env.ACCESS_TOKEN_SECRET, {
+    expiresIn: "30m",
+  });
+
+  return res.json({
+    error: false,
+    user,
+    accessToken,
+    message: "Registeration Successful",
+  });
 });
 
 mongoose
