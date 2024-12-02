@@ -20,7 +20,6 @@ app.use(bodyParser.json());
 //model
 const User = require("./models/UserModels.js");
 const Note = require("./models/AddNotesModels.js");
-
 //Create Account :
 app.post("/create-account", async (req, res) => {
   //Getting data inputs from the user
@@ -100,8 +99,52 @@ app.post("/login", async (req, res) => {
 });
 
 //Add-Notes:
+app.post("/add-note", authenticateToken, async (req, res) => {
+  const { title, content, tags } = req.body;
+  const { user } = req.user;
 
-app.post("/add-note", authenticateToken, async (req, res) => {});
+  if (!title) {
+    res.status(401).json({
+      error: true,
+      message: "Title is required",
+    });
+  }
+  if (!content) {
+    res.status(401).json({
+      error: true,
+      message: " Content is required",
+    });
+  }
+  if (!tags) {
+    res.status(401).json({
+      error: true,
+      message: "Tags are required",
+    });
+  }
+
+  try {
+    const note = new Note({
+      title,
+      content,
+      tags: tags || [],
+      userId: user._id,
+    });
+
+    await note.save();
+
+    return res.json({
+      error: false,
+      note,
+      message: "Note Added succesfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      error: true,
+      message: "Internal Server Error",
+    });
+  }
+});
+
 //mongoose event listening
 mongoose
   .connect(process.env.MongoURL)
