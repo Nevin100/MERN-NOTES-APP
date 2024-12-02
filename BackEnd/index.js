@@ -1,10 +1,10 @@
+//Using the required dependencies
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const dotenv = require("dotenv");
 dotenv.config();
-
 const PORT = process.env.PORT;
 const app = express();
 const jwt = require("jsonwebtoken");
@@ -17,7 +17,10 @@ app.use(
 );
 app.use(bodyParser.json());
 
+//model
 const User = require("./models/UserModels.js");
+const Note = require("./models/AddNotesModels.js");
+
 //Create Account :
 app.post("/create-account", async (req, res) => {
   //Getting data inputs from the user
@@ -60,6 +63,7 @@ app.post("/create-account", async (req, res) => {
   });
 });
 
+//login:
 app.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
@@ -94,6 +98,11 @@ app.post("/login", async (req, res) => {
     });
   }
 });
+
+//Add-Notes:
+
+app.post("/add-note", authenticateToken, async (req, res) => {});
+//mongoose event listening
 mongoose
   .connect(process.env.MongoURL)
   .then(() => {
