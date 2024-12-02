@@ -147,6 +147,41 @@ app.post("/add-note", authenticateToken, async (req, res) => {
   }
 });
 
+app.put("/edit-note/:noteId", authenticateToken, async (req, res) => {
+  const noteId = req.params.noteId;
+  const { title, content, tags, ispinned } = req.body;
+  const { user } = req.user;
+  if (!title && !content && !tags) {
+    return res
+      .status(400)
+      .json({ error: true, message: "No Changes provided " });
+  }
+  try {
+    const note = await Note.findOne({ _id: noteId, userId: user._id });
+    if (!note) {
+      return res.status(404).json({ error: true, message: "Note not found!!" });
+    }
+    if (title) {
+      note.title = title;
+    }
+    if (content) {
+      note.content = content;
+    }
+    if (tags) {
+      note.tags = tags;
+    }
+    if (isPinned) {
+      note.isPinned = isPinned;
+    }
+    await note.save();
+
+    return res
+      .status(201)
+      .json({ error: false, note, message: "Note Updated Successfully!!" });
+  } catch (error) {
+    res.status(401).json({ error: true, message: "Invalid Request" });
+  }
+});
 //mongoose event listening
 mongoose
   .connect(process.env.MongoURL)
