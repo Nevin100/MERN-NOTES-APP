@@ -102,7 +102,7 @@ app.post("/login", async (req, res) => {
 app.post("/add-note", authenticateToken, async (req, res) => {
   const { title, content, tags } = req.body;
   const { user } = req.user;
-
+  //Checking if the title or content or tag are empty?
   if (!title) {
     res.status(401).json({
       error: true,
@@ -121,7 +121,7 @@ app.post("/add-note", authenticateToken, async (req, res) => {
       message: "Tags are required",
     });
   }
-
+  //try this: where title,content, tags, user_id are the fields in the database
   try {
     const note = new Note({
       title,
@@ -130,8 +130,10 @@ app.post("/add-note", authenticateToken, async (req, res) => {
       userId: user._id,
     });
 
+    //note is going to be save here
     await note.save();
 
+    //return the response
     return res.json({
       error: false,
       note,
@@ -140,7 +142,7 @@ app.post("/add-note", authenticateToken, async (req, res) => {
   } catch (error) {
     return res.status(500).json({
       error: true,
-      message: "Internal Server Error",
+      message: "Internal Server Error", //displaying error
     });
   }
 });
