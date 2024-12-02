@@ -24,7 +24,7 @@ const noteSchema = new Schema({
   },
   createdOn: {
     type: Date,
-    default: new date().getTime(),
+    default: new Date().getTime(),
   },
 });
 
