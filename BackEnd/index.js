@@ -1,19 +1,21 @@
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
+const bodyParser = require("body-parser");
 const dotenv = require("dotenv");
 dotenv.config();
 
 const PORT = process.env.PORT;
 const app = express();
 const jwt = require("jsonwebtoken");
-const { authentication } = require("./utilitis.js");
+const { authenticateToken } = require("./utilitis.js");
 app.use(express.json());
 app.use(
   cors({
     origin: "*",
   })
 );
+app.use(bodyParser.json());
 
 const User = require("./models/UserModels.js");
 //Create Account :
@@ -45,10 +47,11 @@ app.post("/create-account", async (req, res) => {
 
   //Save the neww details
   await user.save();
+  //using jwt auth here
   const accessToken = jwt.sign({ user }, process.env.ACCESS_TOKEN_SECRET, {
-    expiresIn: "30m",
+    expiresIn: "36000m",
   });
-
+  //final response
   return res.json({
     error: false,
     user,
@@ -57,11 +60,42 @@ app.post("/create-account", async (req, res) => {
   });
 });
 
+app.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email) {
+    return res.status(401).json({ error: true, message: "Email is required" });
+  }
+  if (!password) {
+    return res
+      .status(401)
+      .json({ error: true, message: "Password is required" });
+  }
+  const userInfo = await User.findOne({ email: email });
+  if (!userInfo) {
+    return res.status(401).json({ error: true, message: "No User found" });
+  }
+
+  if (userInfo.email === email && userInfo.password === password) {
+    const user = { user: userInfo };
+    const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
+      expiresIn: "3600m",
+    });
+    return res.json({
+      error: false,
+      message: "Login Successful",
+      email,
+      accessToken,
+    });
+  } else {
+    res.status(401).json({
+      error: true,
+      message: "Invalid Email or Password",
+    });
+  }
+});
 mongoose
-  .connect(process.env.MongoURL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+  .connect(process.env.MongoURL)
   .then(() => {
     console.log("Database connected successfully");
     app.listen(PORT, () => console.log(`Server running on port: ${PORT}`));
