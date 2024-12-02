@@ -114,7 +114,7 @@ app.post("/get-user", authenticateToken, async (req, res) => {
       fullName: IsUser.fullName,
       email: IsUser.email,
       _id: IsUser._id,
-      createdOn: IsUser.createdOn,
+      createdOn: IsUser.CreatedOn,
     },
     message: "",
   });
@@ -195,32 +195,45 @@ app.post("/add-note", authenticateToken, async (req, res) => {
 // Edit Note
 app.put("/edit-note/:noteId", authenticateToken, async (req, res) => {
   const noteId = req.params.noteId;
+
+  // Validate noteId
+  if (!mongoose.Types.ObjectId.isValid(noteId)) {
+    return res.status(400).json({ error: true, message: "Invalid note ID" });
+  }
+
   const { title, content, tags, isPinned } = req.body;
 
-  if (!title && !content && !tags && isPinned === undefined) {
+  // Validate changes provided
+  if (!title && !content && !tags && typeof isPinned === "undefined") {
     return res
       .status(400)
       .json({ error: true, message: "No changes provided" });
   }
 
   try {
+    // Find note by ID and user ID
     const note = await Note.findOne({ _id: noteId, userId: req.user.userId });
+
     if (!note) {
       return res.status(404).json({ error: true, message: "Note not found" });
     }
 
+    // Apply updates
     if (title) note.title = title;
     if (content) note.content = content;
     if (tags) note.tags = tags;
-    if (isPinned !== undefined) note.isPinned = isPinned;
+    if (typeof isPinned !== "undefined") note.isPinned = isPinned;
 
+    // Save the note
     await note.save();
+
     return res.json({
       error: false,
       note,
       message: "Note updated successfully",
     });
   } catch (error) {
+    console.error(error); // Log the actual error
     return res
       .status(500)
       .json({ error: true, message: "Internal Server Error" });
