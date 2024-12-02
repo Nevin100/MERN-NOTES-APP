@@ -149,7 +149,7 @@ app.post("/add-note", authenticateToken, async (req, res) => {
 
 app.put("/edit-note/:noteId", authenticateToken, async (req, res) => {
   const noteId = req.params.noteId;
-  const { title, content, tags, ispinned } = req.body;
+  const { title, content, tags, isPinned } = req.body;
   const { user } = req.user;
   if (!title && !content && !tags) {
     return res
