@@ -51,7 +51,7 @@ const authenticateToken = (req, res, next) => {
   }
 };
 
-// Routes
+// Routes:
 
 // Create Account
 app.post("/create-account", async (req, res) => {
@@ -101,6 +101,26 @@ app.post("/create-account", async (req, res) => {
 });
 
 // Login
+app.post("/get-user", authenticateToken, async (req, res) => {
+  const { user } = req.user;
+  const IsUser = await User.findOne({ _id: user_id });
+
+  if (!IsUser) {
+    return res.status(401);
+  }
+
+  return res.json({
+    user: {
+      fullName: IsUser.fullName,
+      email: IsUser.email,
+      _id: IsUser._id,
+      createdOn: IsUser.createdOn,
+    },
+    message: "",
+  });
+});
+
+//Get User:
 app.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
@@ -262,7 +282,7 @@ app.put("/update-note-pinned/:noteId", authenticateToken, async (req, res) => {
       return res.status(404).json({ error: true, message: "Note not found" });
     }
 
-    if (isPinned !== undefined) note.isPinned = isPinned;
+    note.isPinned = isPinned;
 
     await note.save();
     return res.json({
