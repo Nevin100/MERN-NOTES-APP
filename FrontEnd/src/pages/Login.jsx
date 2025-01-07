@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import Navbar from "../components/Navbar.jsx";
 import { Link, useNavigate } from "react-router-dom";
-import passwordInput from "../components/passwordInput.jsx";
+import PasswordInput from "../components/PasswordInput.jsx";
 import { validateEmail } from "../utilis/helper.js";
-import axiosInstance from "../utilis/AxiosInstance.js";
+
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setpassword] = useState("");
@@ -11,7 +11,7 @@ const Login = () => {
   const navigate = useNavigate();
   const handleLogin = async (e) => {
     e.preventDefault();
-    if (!validateEmail(email)) {
+    if (!validateEmail(email.trim())) {
       seterror("Please Enter a valid Email address ");
       return;
     }
@@ -20,29 +20,6 @@ const Login = () => {
       return;
     }
     seterror("");
-
-    //Login API :
-    try {
-      const response = await axiosInstance.post("/login", {
-        email: email,
-        password: password,
-      });
-
-      if (response.data && response.data.accessToken) {
-        localStorage.setItem("token", response.data.accessToken);
-        navigate("/dashboard");
-      }
-    } catch (error) {
-      if (
-        error.response &&
-        error.response.data &&
-        error.response.data.message
-      ) {
-        seterror(error.response.data.message);
-      } else {
-        seterror("Unexpected error!");
-      }
-    }
   };
 
   return (
@@ -61,7 +38,7 @@ const Login = () => {
               onChange={(e) => setEmail(e.target.value)}
             />
 
-            <passwordInput
+            <PasswordInput
               value={password}
               onChange={(e) => setpassword(e.target.value)}
             />
