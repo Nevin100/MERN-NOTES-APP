@@ -6,6 +6,7 @@ import AddEditNotes from "./AddEditNotes.jsx";
 import Modal from "react-modal";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../utilis/AxiosInstance.js";
+import moment from "moment";
 
 const Home = () => {
   const [openAddEditModal, setOpenAddEditModal] = useState({
@@ -15,7 +16,7 @@ const Home = () => {
   });
 
   const [userInfo, setUserInfo] = useState(null);
-
+  const [allNotes, setAllNotes] = useState([]);
   const navigate = useNavigate();
   const getUserInfo = async () => {
     try {
@@ -31,7 +32,20 @@ const Home = () => {
     }
   };
 
+  //Get All Notes :
+  const getAllNotes = async () => {
+    try {
+      const response = await axiosInstance.get("/get-all-notes");
+      if (response.data && response.data.notes) {
+        setAllNotes(response.data.notes);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
+    getAllNotes();
     getUserInfo();
     return () => {};
   }, []);
@@ -41,16 +55,19 @@ const Home = () => {
       <Navbar userInfo={userInfo} />
       <div className="container mx-auto">
         <div className="grid grid-cols-3 gap-4 mt-8 rounded-md">
-          <NoteCard
-            title="Meeting on 7th December"
-            date="28th Nov 2024"
-            content="Important Meeting!"
-            tag="#Meeting"
-            isPlnned={true}
-            onEdit={() => {}}
-            onDelete={() => {}}
-            onPinNote={() => {}}
-          />
+          {allNotes.map((item, index) => (
+            <NoteCard
+              key={item._id}
+              title={item.title}
+              date={moment(item.createdOn).format("Do MMM YYYY")}
+              content={item.content}
+              tag={item.tags}
+              isPlnned={item.isPinned}
+              onEdit={() => {}}
+              onDelete={() => {}}
+              onPinNote={() => {}}
+            />
+          ))}
         </div>
       </div>
       <button
@@ -83,6 +100,7 @@ const Home = () => {
           onClose={() => {
             setOpenAddEditModal({ isShown: false, type: "add", data: null });
           }}
+          getAllNotes={getAllNotes}
         />
       </Modal>
     </>

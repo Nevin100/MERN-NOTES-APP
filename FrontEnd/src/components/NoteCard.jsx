@@ -26,7 +26,9 @@ const NoteCard = ({
       </div>
       <p className="text-xs text-slate-600 mt-2">{content?.slice(0, 60)}</p>
       <div className="flex justify-between items-center">
-        <div className="text-xs text-slate-500 mt-2 ">{tag}</div>
+        <div className="text-xs text-slate-500 mt-2 ">
+          {tag.map((item) => ` #${item} `)}
+        </div>
         <div className="flex gap-2 items-center ">
           <MdCreate
             className="icon-btn hover:text-green-600"
