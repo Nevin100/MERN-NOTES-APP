@@ -4,9 +4,9 @@ import { MdOutlineClose } from "react-icons/md";
 import axiosInstance from "../utilis/AxiosInstance.js";
 
 const AddEditNotes = ({ noteData, getAllNotes, type, onClose }) => {
-  const [title, setTitle] = useState("");
-  const [content, setcontent] = useState("");
-  const [tags, setTags] = useState([]);
+  const [title, setTitle] = useState(noteData?.title || "");
+  const [content, setcontent] = useState(noteData?.content || "");
+  const [tags, setTags] = useState(noteData?.tags || []);
 
   const [error, seterror] = useState(null);
 
@@ -33,7 +33,29 @@ const AddEditNotes = ({ noteData, getAllNotes, type, onClose }) => {
     }
   };
 
-  const editNote = async () => {};
+  const editNote = async () => {
+    const noteId = noteData._id;
+    try {
+      const response = await axiosInstance.put(`/edit-note/${noteId}`, {
+        title,
+        content,
+        tags,
+      });
+
+      if (response.data && response.data.note) {
+        getAllNotes();
+        onClose();
+      }
+    } catch (error) {
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
+        seterror(error.response.data.message);
+      }
+    }
+  };
 
   const handleAddNote = () => {
     if (!title || !content || !tags.length) {
@@ -63,7 +85,7 @@ const AddEditNotes = ({ noteData, getAllNotes, type, onClose }) => {
           className="text-2xl text-slate-950 outline-none"
           placeholder="Go To Meeting"
           value={title}
-          onChange={() => setTitle(event.target.value)}
+          onChange={(ev) => setTitle(ev.target.value)}
         />
       </div>
       <div className="flex flex-col gap-2 mt-4">
@@ -74,7 +96,7 @@ const AddEditNotes = ({ noteData, getAllNotes, type, onClose }) => {
           placeholder="Content"
           rows={10}
           value={content}
-          onChange={() => setcontent(event.target.value)}
+          onChange={(ev) => setcontent(ev.target.value)}
         />
       </div>
       <div className="mt-3">
@@ -87,7 +109,7 @@ const AddEditNotes = ({ noteData, getAllNotes, type, onClose }) => {
         className="btn-primary font-medium mt-5 p-3"
         onClick={handleAddNote}
       >
-        ADD
+        {type === "edit" ? "UPDATE" : "ADD"}
       </button>
     </div>
   );
