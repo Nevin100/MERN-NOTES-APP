@@ -209,7 +209,7 @@ app.delete("/delete-note/:noteId", authenticateToken, async (req, res) => {
         .json({ error: true, message: "Internal Server issue" });
     }
 
-    await Note.deleteOne({ _id: noteId, userid: user._Id });
+    await Note.deleteOne({ _id: noteId, userId: user._Id });
 
     return res.status(200).json({
       error: false,
@@ -221,6 +221,40 @@ app.delete("/delete-note/:noteId", authenticateToken, async (req, res) => {
       .json({ error: true, message: "Internal Server Issue" });
   }
 });
+
+//Update-IsPinned :
+app.put("/update-note-pinned/:noteId", authenticateToken, async (req, res) => {
+  const { noteId } = req.params;
+  const { isPinned } = req.body;
+  const { user } = req.user;
+
+  if (!isPinned) {
+    return res
+      .status(401)
+      .json({ error: true, message: "No Changes Required" });
+  }
+  try {
+    const note = await Note.findOne({ _id: noteId, userId: user._id });
+    if (!note) {
+      return res.status(401).json({ error: true, message: "Note Not Found" });
+    }
+
+    note.isPinned = isPinned;
+
+    await note.save();
+    return res.status(200).json({
+      error: false,
+      note,
+      message: "Note Updated Successfully",
+    });
+  } catch (error) {
+    return res.status(401).json({
+      error: true,
+      message: "Internal Server Error",
+    });
+  }
+});
+
 mongoose.connect(process.env.MONGO_URL).then(() => {
   console.log("The Backend is connected to the Database ");
   app.listen(8000, () => {
