@@ -18,7 +18,7 @@ const AddEditNotes = ({ noteData, getAllNotes, type, onClose }) => {
         tags,
       });
 
-      if (response.data && response.data.note) {
+      if (response.data && !response.data.error) {
         getAllNotes();
         onClose();
       }

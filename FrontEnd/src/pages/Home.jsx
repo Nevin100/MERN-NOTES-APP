@@ -49,6 +49,26 @@ const Home = () => {
     }
   };
 
+  const deleteNote = async (data) => {
+    const noteId = data._id;
+    try {
+      const response = await axiosInstance.delete(`/delete-note/${noteId}`);
+
+      if (response.data && !response.data.error) {
+        setAllNotes((prevNotes) =>
+          prevNotes.filter((note) => note._id !== noteId)
+        );
+      }
+    } catch (error) {
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
+        console.log(error);
+      }
+    }
+  };
   useEffect(() => {
     getAllNotes();
     getUserInfo();
@@ -69,7 +89,7 @@ const Home = () => {
               tag={item.tags}
               isPlnned={item.isPinned}
               onEdit={() => handleEdit(item)}
-              onDelete={() => {}}
+              onDelete={() => deleteNote(item)}
               onPinNote={() => {}}
             />
           ))}
