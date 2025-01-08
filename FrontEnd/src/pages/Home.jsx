@@ -18,7 +18,7 @@ const Home = () => {
   const [userInfo, setUserInfo] = useState(null);
   const [allNotes, setAllNotes] = useState([]);
   const navigate = useNavigate();
-
+  const [isSearch, setIsSearch] = useState(false);
   const handleEdit = (noteDetails) => {
     setOpenAddEditModal({ isShown: true, data: noteDetails, type: "edit" });
   };
@@ -69,6 +69,43 @@ const Home = () => {
       }
     }
   };
+
+  const onSearchNote = async (query) => {
+    try {
+      const response = await axiosInstance.get("/search-notes", {
+        params: { query },
+      });
+      if (response.data && response.data.notes) {
+        setIsSearch(true);
+        setAllNotes(response.data.notes);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleClearSearch = () => {
+    setIsSearch(false);
+    getAllNotes();
+  };
+
+  const updateisPinned = async (noteData) => {
+    const noteId = noteData._id;
+    try {
+      const response = await axiosInstance.put(
+        `/update-note-pinned/${noteId}`,
+        {
+          isPinned: !noteData.isPinned,
+        }
+      );
+
+      if (response.data && response.data.note) {
+        getAllNotes();
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   useEffect(() => {
     getAllNotes();
     getUserInfo();
@@ -77,7 +114,11 @@ const Home = () => {
 
   return (
     <>
-      <Navbar userInfo={userInfo} />
+      <Navbar
+        userInfo={userInfo}
+        onSearchNote={onSearchNote}
+        handleClearSearch={handleClearSearch}
+      />
       <div className="container mx-auto">
         <div className="grid grid-cols-3 gap-4 mt-8 rounded-md">
           {allNotes.map((item, index) => (
@@ -90,7 +131,7 @@ const Home = () => {
               isPlnned={item.isPinned}
               onEdit={() => handleEdit(item)}
               onDelete={() => deleteNote(item)}
-              onPinNote={() => {}}
+              onPinNote={() => updateisPinned(item)}
             />
           ))}
         </div>

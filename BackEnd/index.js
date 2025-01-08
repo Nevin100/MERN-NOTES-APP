@@ -269,7 +269,7 @@ app.get("/get-user", authenticateToken, async (req, res) => {
 });
 
 //Search-Query :
-app.put("/search-notes", authenticateToken, async (req, res) => {
+app.get("/search-notes", authenticateToken, async (req, res) => {
   const { user } = req.user;
   const { query } = req.query;
 
