@@ -255,6 +255,19 @@ app.put("/update-note-pinned/:noteId", authenticateToken, async (req, res) => {
   }
 });
 
+app.get("/get-user", authenticateToken, async (req, res) => {
+  const { user } = req.user;
+  const isUser = await User.findOne({ _id: user._id });
+
+  if (!isUser) {
+    return res.sendStatus(401);
+  }
+  return res.json({
+    user: isUser,
+    message: "",
+  });
+});
+
 mongoose.connect(process.env.MONGO_URL).then(() => {
   console.log("The Backend is connected to the Database ");
   app.listen(8000, () => {
