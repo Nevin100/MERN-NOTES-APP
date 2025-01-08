@@ -226,29 +226,31 @@ app.delete("/delete-note/:noteId", authenticateToken, async (req, res) => {
 app.put("/update-note-pinned/:noteId", authenticateToken, async (req, res) => {
   const { noteId } = req.params;
   const { isPinned } = req.body;
-  const { user } = req.user;
+  const user = req.user; // Assuming req.user contains user info after authentication
 
-  if (!isPinned) {
+  if (isPinned === undefined) {
     return res
-      .status(401)
-      .json({ error: true, message: "No Changes Required" });
+      .status(400)
+      .json({ error: true, message: "isPinned is required" });
   }
+
   try {
     const note = await Note.findOne({ _id: noteId, userId: user._id });
     if (!note) {
-      return res.status(401).json({ error: true, message: "Note Not Found" });
+      return res.status(404).json({ error: true, message: "Note Not Found" });
     }
 
     note.isPinned = isPinned;
-
     await note.save();
+
     return res.status(200).json({
       error: false,
       note,
       message: "Note Updated Successfully",
     });
   } catch (error) {
-    return res.status(401).json({
+    console.error("Error updating note:", error); // Debugging log
+    return res.status(500).json({
       error: true,
       message: "Internal Server Error",
     });
@@ -270,12 +272,12 @@ app.get("/get-user", authenticateToken, async (req, res) => {
 
 //Search-Query :
 app.get("/search-notes", authenticateToken, async (req, res) => {
-  const { user } = req.user;
+  const user = req.user;
   const { query } = req.query;
 
   if (!query) {
     return res
-      .status(401)
+      .status(400)
       .json({ error: true, message: "Search Query is required" });
   }
 
@@ -289,14 +291,15 @@ app.get("/search-notes", authenticateToken, async (req, res) => {
     });
 
     return res
-      .status(400)
-      .json({ erorr: false, notes: matchingNotes, message: "Notes matched!" });
+      .status(200)
+      .json({ error: false, notes: matchingNotes, message: "Notes matched!" });
   } catch (error) {
     return res
-      .status(401)
+      .status(500)
       .json({ error: true, message: "Internal Server Issue" });
   }
 });
+
 mongoose.connect(process.env.MONGO_URL).then(() => {
   console.log("The Backend is connected to the Database ");
   app.listen(8000, () => {
