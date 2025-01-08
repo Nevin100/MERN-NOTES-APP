@@ -268,6 +268,35 @@ app.get("/get-user", authenticateToken, async (req, res) => {
   });
 });
 
+//Search-Query :
+app.put("/search-notes", authenticateToken, async (req, res) => {
+  const { user } = req.user;
+  const { query } = req.query;
+
+  if (!query) {
+    return res
+      .status(401)
+      .json({ error: true, message: "Search Query is required" });
+  }
+
+  try {
+    const matchingNotes = await Note.find({
+      userId: user._id,
+      $or: [
+        { title: { $regex: new RegExp(query, "i") } },
+        { content: { $regex: new RegExp(query, "i") } },
+      ],
+    });
+
+    return res
+      .status(400)
+      .json({ erorr: false, notes: matchingNotes, message: "Notes matched!" });
+  } catch (error) {
+    return res
+      .status(401)
+      .json({ error: true, message: "Internal Server Issue" });
+  }
+});
 mongoose.connect(process.env.MONGO_URL).then(() => {
   console.log("The Backend is connected to the Database ");
   app.listen(8000, () => {
