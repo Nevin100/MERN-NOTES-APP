@@ -14,6 +14,7 @@ app.use(
 
 const { authenticateToken } = require("./utilis.js");
 const User = require("./models/userModel.js");
+const Note = require("./models/noteModel.js");
 
 //Create Account :
 app.post("/create-account", async (req, res) => {
@@ -47,7 +48,9 @@ app.post("/create-account", async (req, res) => {
 
   await user.save();
 
-  const accessToken = jwt.sign({ user }, process.env.ACCESS_SECRET_TOKEN);
+  const accessToken = jwt.sign({ user }, process.env.ACCESS_SECRET_TOKEN, {
+    expiresIn: "3600h",
+  });
 
   return res.json({
     error: false,
@@ -57,6 +60,7 @@ app.post("/create-account", async (req, res) => {
   });
 });
 
+//login :
 app.post("/login", async (req, res) => {
   const { email, password } = req.body;
   if (!email) {
@@ -80,7 +84,9 @@ app.post("/login", async (req, res) => {
 
   if (userInfo.email == email && userInfo.password == password) {
     const user = { user: userInfo };
-    const accessToken = jwt.sign(user, process.env.ACCESS_SECRET_TOKEN);
+    const accessToken = jwt.sign(user, process.env.ACCESS_SECRET_TOKEN, {
+      expiresIn: "3600h",
+    });
 
     return res.json({
       error: false,
@@ -93,6 +99,40 @@ app.post("/login", async (req, res) => {
       error: true,
       message: "Invalid Credentials",
     });
+  }
+});
+
+//Routes :
+//1.)Add Note :
+app.post("/add-note", authenticateToken, async (req, res) => {
+  const { title, content, tags } = req.body;
+  const { user } = req.user;
+  if (!title) {
+    return res.status(401).json({ error: true, message: "Title is required" });
+  }
+  if (!content) {
+    return res
+      .status(401)
+      .json({ error: true, message: "Content is required" });
+  }
+  try {
+    const note = new Note({
+      title,
+      content,
+      tags: tags || [],
+      userId: user._id,
+    });
+
+    await note.save();
+    return res.json({
+      error: false,
+      note,
+      message: "Note Added Successfully",
+    });
+  } catch (error) {
+    return res
+      .status(401)
+      .json({ error: true, message: "Internal Server Issue!" });
   }
 });
 
