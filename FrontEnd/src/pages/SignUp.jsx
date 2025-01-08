@@ -1,15 +1,16 @@
 import React, { useState } from "react";
 import Navbar from "../components/Navbar.jsx";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import PasswordInput from "../components/PasswordInput.jsx";
 import { validateEmail } from "../utilis/helper.js";
+import axiosInstance from "../utilis/AxiosInstance.js";
 
 const SignUp = () => {
   const [Name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [Password, setPassword] = useState("");
   const [Error, setError] = useState(null);
-
+  const navigate = useNavigate();
   const handleSignUp = async (e) => {
     e.preventDefault();
 
@@ -26,6 +27,27 @@ const SignUp = () => {
     }
 
     setError("");
+    try {
+      const response = await axiosInstance.post("/create-account", {
+        fullName: Name,
+        email: email,
+        password: Password,
+      });
+
+      if (response.data && response.data.error) {
+        setError(response.data.message);
+      }
+      if (response.data && response.data.accessToken) {
+        localStorage.setItem("token", response.data.accessToken);
+        navigate("/login");
+      }
+    } catch (error) {
+      if (error.response && error.response.data) {
+        setError(error.response.data.message);
+      } else {
+        console.log("Unexpected Error");
+      }
+    }
   };
 
   return (
