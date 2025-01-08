@@ -124,7 +124,7 @@ app.post("/add-note", authenticateToken, async (req, res) => {
     });
 
     await note.save();
-    return res.json({
+    return res.status(200).json({
       error: false,
       note,
       message: "Note Added Successfully",
@@ -136,6 +136,91 @@ app.post("/add-note", authenticateToken, async (req, res) => {
   }
 });
 
+//Edit Note
+app.put("/edit-note/:noteId", authenticateToken, async (req, res) => {
+  const noteId = req.params.noteId;
+  const { title, content, tags, isPinned } = req.body;
+  const { user } = req.user;
+
+  if (!title && !content && !tags) {
+    return res
+      .status(401)
+      .json({ error: true, message: "No Changes Required" });
+  }
+  try {
+    const note = await Note.findOne({ _id: noteId, userId: user._id });
+    if (!note) {
+      return res.status(401).json({ error: true, message: "Note Not Found" });
+    }
+    if (title) {
+      note.title = title;
+    }
+    if (content) {
+      note.content = content;
+    }
+    if (tags) {
+      note.tags = tags;
+    }
+    if (isPinned) {
+      note.isPinned = isPinned;
+    }
+
+    await note.save();
+    return res.status(200).json({
+      error: false,
+      note,
+      message: "Note Updated Successfully",
+    });
+  } catch (error) {
+    return res.status(401).json({
+      error: true,
+      message: "Internal Server Error",
+    });
+  }
+});
+
+//Get-All-Notes
+app.get("/get-all-notes", authenticateToken, async (req, res) => {
+  const { user } = req.user;
+  try {
+    const notes = await Note.find({ userId: user._id }).sort({ isPinned: -1 });
+    return res.status(200).json({
+      error: false,
+      notes,
+      message: "All Notes are retrieved Successfully",
+    });
+  } catch (error) {
+    return res
+      .status(401)
+      .json({ error: true, message: "Intrernal Server Down" });
+  }
+});
+
+//Delete-Note
+app.delete("/delete-note/:noteId", authenticateToken, async (req, res) => {
+  const noteId = req.params.noteId;
+  const { user } = req.user;
+
+  try {
+    const note = await Note.findOne({ _id: noteId, userId: user._id });
+    if (!note) {
+      return res
+        .status(401)
+        .json({ error: true, message: "Internal Server issue" });
+    }
+
+    await Note.deleteOne({ _id: noteId, userid: user._Id });
+
+    return res.status(200).json({
+      error: false,
+      message: "Note successfully Deleted",
+    });
+  } catch (error) {
+    return res
+      .status(401)
+      .json({ error: true, message: "Internal Server Issue" });
+  }
+});
 mongoose.connect(process.env.MONGO_URL).then(() => {
   console.log("The Backend is connected to the Database ");
   app.listen(8000, () => {
