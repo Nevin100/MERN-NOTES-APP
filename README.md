@@ -1,8 +1,9 @@
 # 🗒️ Notify — The Sleek MERN Notes App 🚀
 
-![Notify Screenshot](./f2f8362b-b2ed-45d6-979d-08ecb5cc74c2.png)
+![image](https://github.com/user-attachments/assets/89cfaac0-8076-4438-8859-ea13a2a28823)
 
-📅 _Built with ❤️ on 25th May 2025_  
+
+📅 _Built with ❤️ 
 👨‍💻 **Developer:** Nevin Bali  
 
 ## 📌 What is Notify?
