@@ -30,12 +30,6 @@
 
 ---
 
-## 📸 Live Preview
-Here's what it looks like in action:
-
-![Notify Dashboard](./f2f8362b-b2ed-45d6-979d-08ecb5cc74c2.png)
-
----
 
 ## 🛠️ How to Run Locally
 
