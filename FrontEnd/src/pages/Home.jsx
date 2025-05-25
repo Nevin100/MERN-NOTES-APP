@@ -1,4 +1,6 @@
-import React, { useEffect, useState } from "react";
+/* eslint-disable no-unused-vars */
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar.jsx";
 import NoteCard from "../components/NoteCard.jsx";
 import { IoMdAdd } from "react-icons/io";
@@ -121,7 +123,7 @@ const Home = () => {
       />
       <div className="container mx-auto">
         <div className="grid grid-cols-3 gap-4 mt-8 rounded-md">
-          {allNotes.map((item, index) => (
+          {allNotes.map((item) => (
             <NoteCard
               key={item._id}
               title={item.title}

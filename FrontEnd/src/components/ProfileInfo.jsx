@@ -1,4 +1,4 @@
-import React from "react";
+/* eslint-disable react/prop-types */
 import { getInitals } from "../utilis/helper";
 const ProfileInfo = ({ userInfo, onlogOut }) => {
   return (

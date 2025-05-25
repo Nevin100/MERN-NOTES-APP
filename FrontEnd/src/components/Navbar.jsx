@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+/* eslint-disable react/prop-types */
+import { useState } from "react";
 import ProfileInfo from "./ProfileInfo.jsx";
 import { useNavigate } from "react-router-dom";
 import Searchbar from "./Searchbar.jsx";

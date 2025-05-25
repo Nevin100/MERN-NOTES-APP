@@ -1,4 +1,4 @@
-import React from "react";
+/* eslint-disable react/prop-types */
 import { MdOutlinePushPin } from "react-icons/md";
 import { MdCreate, MdDelete } from "react-icons/md";
 

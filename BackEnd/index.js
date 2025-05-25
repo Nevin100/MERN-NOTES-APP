@@ -204,21 +204,20 @@ app.delete("/delete-note/:noteId", authenticateToken, async (req, res) => {
   try {
     const note = await Note.findOne({ _id: noteId, userId: user._id });
     if (!note) {
-      return res
-        .status(401)
-        .json({ error: true, message: "Internal Server issue" });
+      return res.status(404).json({ error: true, message: "Note Not Found" });
     }
 
-    await Note.deleteOne({ _id: noteId, userId: user._Id });
+    await Note.deleteOne({ _id: noteId, userId: user._id });
 
     return res.status(200).json({
       error: false,
-      message: "Note successfully Deleted",
+      message: "Note successfully deleted",
     });
   } catch (error) {
+    console.error("Error deleting note:", error);
     return res
-      .status(401)
-      .json({ error: true, message: "Internal Server Issue" });
+      .status(500)
+      .json({ error: true, message: "Internal Server Error" });
   }
 });
 

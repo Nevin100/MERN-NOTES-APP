@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+/* eslint-disable react/prop-types */
+import { useState } from "react";
 import { MdAdd, MdDelete } from "react-icons/md";
 
 const TagInput = ({ tags, setTags }) => {

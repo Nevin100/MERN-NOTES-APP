@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+/* eslint-disable react/prop-types */
+import { useState } from "react";
 import TagInput from "../components/TagInput.jsx";
 import { MdOutlineClose } from "react-icons/md";
 import axiosInstance from "../utilis/AxiosInstance.js";
