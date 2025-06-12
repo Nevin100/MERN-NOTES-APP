@@ -1,4 +1,4 @@
-# 🗒️ Notify — The Sleek MERN Notes App 🚀
+# 🗒️ Notify — The Cute Sleek MERN Notes App 🚀
 
 ![image](https://github.com/user-attachments/assets/89cfaac0-8076-4438-8859-ea13a2a28823)
 
