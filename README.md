@@ -11,6 +11,9 @@
 > **Notify** is your personal cloud-powered note management system — minimal in design, _maximum_ in function. Built with the **MERN stack** and sprinkled with Tailwind magic ✨, it makes organizing your thoughts a breeze!
 
 ---
+## Live Preview : 🎥
+https://notify-self-two.vercel.app/
+
 
 ## 🧠 Tech Stack Highlights
 1. **Frontend:** React + Tailwind CSS = Lightning-fast UI ⚡  
