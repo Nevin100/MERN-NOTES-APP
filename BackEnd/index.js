@@ -6,7 +6,10 @@ const app = express();
 const jwt = require("jsonwebtoken");
 
 app.use(express.json());
-const allowedOrigins = ["http://localhost:5173", ""];
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://notify-self-two.vercel.app",
+];
 
 app.use(
   cors({
