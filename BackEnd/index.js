@@ -6,11 +6,24 @@ const app = express();
 const jwt = require("jsonwebtoken");
 
 app.use(express.json());
+const allowedOrigins = ["http://localhost:5173", ""];
+
 app.use(
   cors({
-    origin: "*",
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
   })
 );
+
+app.get("/", async (req, res) => {
+  res.send("Hello Fromn Backend and Backend is running fine");
+});
 
 const { authenticateToken } = require("./utilis.js");
 const User = require("./models/userModel.js");
